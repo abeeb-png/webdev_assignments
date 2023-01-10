@@ -1,0 +1,56 @@
+const express = require("express")
+const path = require("path")
+const app = express()
+
+const database = [
+    "Buy eggs, milk, butter, and cereal",
+    "Do Strength Training",
+    "Do Homework"
+]
+
+app.post("/save", express.text(), function(req, res){
+    database.push(req.body)
+    console.log(database)
+    res.sendStatus(201)
+})
+
+app
+    .route("/tasks")
+    .get(function(req, res){
+        console.log("A request was recieved!")
+        res.json(database)
+    })
+    .delete(function(req, res){
+        database.pop()
+        res.sendStatus(200)
+    })
+
+app
+    .route("/specific_task")
+    .get(express.text(), function(req, res){ // Getting a Specific Task
+        res.json(database[req.body])
+    })
+    .delete(express.text(), function(req, res){ // Deleting a Specific Task
+        database.splice(req.body,1)
+        res.sendStatus(200)
+    })
+    
+app
+    .route("/sorted_tasks")
+    .get(function(req,res){ // Sorting the Database
+        database.sort()
+        res.json(database)
+        res.sendStatus(200)
+    })
+
+app
+    .route("/update_task")
+    .put(express.text(), function(req, res){ // Updating an Existing Task [Incomplete]
+        database[req.body] = req.body
+        res.sendStatus(200)
+    })
+
+app.listen(3000, function() {
+    console.log("Server Running.")
+}) //This is port number where we want our function running.
+
